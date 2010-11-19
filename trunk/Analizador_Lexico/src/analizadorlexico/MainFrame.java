@@ -41,6 +41,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabla = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Analizador Lexico");
 
         txtEntrada.setColumns(20);
         txtEntrada.setRows(5);
