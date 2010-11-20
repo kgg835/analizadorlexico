@@ -28,6 +28,8 @@ public class AFDPalabrasReservadas  extends AFD{
             return TOKEN.WHILE;
         if(palabra.equalsIgnoreCase("case"))
             return TOKEN.WHILE;
+        if(palabra.equalsIgnoreCase("return"))
+            return TOKEN.RETURN;
         return TOKEN.ERROR;
     }
 
