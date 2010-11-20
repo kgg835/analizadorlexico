@@ -17,7 +17,7 @@ public class AnalizadorLexico {
 
     public enum TOKEN {
         NUMERO,
-        IF, THEN, ELSE, FOR, WHILE, SWITCH, CASE,
+        IF, THEN, ELSE, FOR, WHILE, SWITCH, CASE, RETURN,
         IDENTIFICADOR,
         MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, DIFERENTE,
         ERROR };
