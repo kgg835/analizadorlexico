@@ -11,8 +11,24 @@
 
 package analizadorlexico;
 
+import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 /**
  *
@@ -20,9 +36,14 @@ import javax.swing.table.DefaultTableModel;
  */
 public class MainFrame extends javax.swing.JFrame {
 
+
+    private List<Lexico> lista;
+    private File archivo;
+
     /** Creates new form MainFrame */
-    public MainFrame() {
+    public MainFrame() throws BadLocationException {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /** This method is called from within the constructor to
@@ -35,22 +56,24 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         analizadorLexico = new analizadorlexico.AnalizadorLexico();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtEntrada = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        editor = new javax.swing.JTextPane();
+        jToolBar1 = new javax.swing.JToolBar();
+        btnNuevo = new javax.swing.JButton();
+        btnAbrir = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
+        menArchivo = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        mitAbrir = new javax.swing.JMenuItem();
+        menEditar = new javax.swing.JMenu();
+        miCopiar = new javax.swing.JMenuItem();
+        miPegar = new javax.swing.JMenuItem();
+        miCortar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Analizador Lexico");
-
-        txtEntrada.setColumns(20);
-        txtEntrada.setRows(5);
-        txtEntrada.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                txtEntradaCaretUpdate(evt);
-            }
-        });
-        jScrollPane1.setViewportView(txtEntrada);
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -62,33 +85,122 @@ public class MainFrame extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(tabla);
 
+        editor.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                editorCaretUpdate(evt);
+            }
+        });
+        editor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                editorKeyReleased(evt);
+            }
+        });
+        jScrollPane3.setViewportView(editor);
+
+        jToolBar1.setRollover(true);
+
+        btnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlexico/Gnome-document-new16.png"))); // NOI18N
+        btnNuevo.setToolTipText("Nuevo");
+        btnNuevo.setFocusable(false);
+        btnNuevo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNuevo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnNuevo);
+
+        btnAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlexico/Gnome-document-open16.png"))); // NOI18N
+        btnAbrir.setToolTipText("Abrir");
+        btnAbrir.setFocusable(false);
+        btnAbrir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAbrir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbrirActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnAbrir);
+
+        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlexico/Gnome-document-save16.png"))); // NOI18N
+        btnGuardar.setToolTipText("Guardar");
+        btnGuardar.setFocusable(false);
+        btnGuardar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGuardar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnGuardar);
+
+        jMenu1.setMnemonic('A');
+        jMenu1.setText("Archivo");
+        jMenu1.setToolTipText("");
+
+        mitAbrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        mitAbrir.setText("Abrir");
+        mitAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mitAbrirActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mitAbrir);
+
+        menArchivo.add(jMenu1);
+
+        menEditar.setMnemonic('E');
+        menEditar.setText("Editar");
+
+        miCopiar.setAction(new DefaultEditorKit.CopyAction());
+        miCopiar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        miCopiar.setText("Copiar");
+        menEditar.add(miCopiar);
+
+        miPegar.setAction(new DefaultEditorKit.PasteAction());
+        miPegar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        miPegar.setText("Pegar");
+        menEditar.add(miPegar);
+
+        miCortar.setAction(new DefaultEditorKit.CutAction());
+        miCortar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+        miCortar.setText("Cortar");
+        menEditar.add(miCortar);
+
+        menArchivo.add(menEditar);
+
+        setJMenuBar(menArchivo);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 304, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 452, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addContainerGap())
+            .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane2, 0, 0, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(jToolBar1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jScrollPane2, 0, 0, Short.MAX_VALUE)
+                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtEntradaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEntradaCaretUpdate
-        analizadorLexico.crearTokens(txtEntrada.getText());
-        List<Lexico> lista =analizadorLexico.getLexicos();
+    private void editorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_editorCaretUpdate
+        analizadorLexico.crearTokens(editor.getText());
+        lista = analizadorLexico.getLexicos();
         Object datos [][] = new Object[lista.size()][2];
         for (int i = 0; i < datos.length; i++) {
             datos[i][0]=lista.get(i).getToken();
@@ -99,8 +211,125 @@ public class MainFrame extends javax.swing.JFrame {
             new String [] {
                 "Tokens", "Lexema"
             }
-        ));
-    }//GEN-LAST:event_txtEntradaCaretUpdate
+        ));        
+    }//GEN-LAST:event_editorCaretUpdate
+
+    private void editorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_editorKeyReleased
+        try {
+            actualizarColores();
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_editorKeyReleased
+
+    private void mitAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitAbrirActionPerformed
+        try {
+            abrir();
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_mitAbrirActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        nuevo();
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
+        try {
+            abrir();
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_btnAbrirActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        try {
+            guardar();
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void actualizarColores(){
+        Integer idx = 0;
+        for (Lexico lexico : lista) {
+            MutableAttributeSet attributes = new SimpleAttributeSet();
+            idx = editor.getText().indexOf(lexico.getLexema(),idx);
+            AnalizadorLexico.TOKEN token = lexico.getToken();
+            Color color = Color.BLACK;
+            switch (token) {
+                case CASE:
+                case IF:
+                case ELSE:
+                case FOR:
+                case RETURN:
+                case SWITCH:
+                case THEN:
+                case WHILE:
+                    color = Color.BLUE;
+                    StyleConstants.setBold(attributes, true);
+                    break;
+                case DIFERENTE:
+                case IGUAL:
+                case MAYOR:
+                case MAYOR_IGUAL:
+                case MENOR:
+                case MENOR_IGUAL:
+                    color = Color.GREEN;
+                    break;
+                case IDENTIFICADOR:
+                    color = Color.ORANGE.darker();
+                    break;
+                case ERROR:
+                    color = Color.RED;
+                    StyleConstants.setUnderline(attributes, true);
+                    break;
+                case NUMERO:
+                    color = Color.CYAN.darker();
+                    break;
+                default:
+                    color = Color.BLACK;
+            }
+
+            StyleConstants.setForeground(attributes, color);
+            editor.getStyledDocument().setCharacterAttributes(
+                    idx,
+                    lexico.getLexema().length(),
+                    attributes, true);
+        }
+    }
+
+    private void nuevo(){
+        archivo = null;
+        editor.setText("");
+    }
+
+    private void abrir() throws FileNotFoundException, IOException{
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("archivos cmp", "cmp"));
+        int seleccion = fileChooser.showOpenDialog(this);
+        if(seleccion == JFileChooser.APPROVE_OPTION){
+            archivo = fileChooser.getSelectedFile();
+            editor.setText("");
+            BufferedReader filein = new BufferedReader(new FileReader(archivo));
+            String linea="";
+            while( (linea = filein.readLine()) !=null){
+                editor.setText(editor.getText()+linea+"\n");
+            }
+            actualizarColores();
+        }
+    }
+
+    private void guardar() throws FileNotFoundException{
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("archivos cmp", "java"));
+        int seleccion = fileChooser.showSaveDialog(this);
+        if(seleccion == JFileChooser.APPROVE_OPTION){
+            if (archivo==null){
+                archivo = fileChooser.getSelectedFile();
+                PrintWriter fileout = new PrintWriter(archivo);
+                fileout.println(editor.getText());
+                fileout.flush();
+                fileout.close();
+            }
+        }
+    }
 
     /**
     * @param args the command line arguments
@@ -108,17 +337,32 @@ public class MainFrame extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainFrame().setVisible(true);
+                try {
+                    new MainFrame().setVisible(true);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private analizadorlexico.AnalizadorLexico analizadorLexico;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton btnAbrir;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnNuevo;
+    private javax.swing.JTextPane editor;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JMenuBar menArchivo;
+    private javax.swing.JMenu menEditar;
+    private javax.swing.JMenuItem miCopiar;
+    private javax.swing.JMenuItem miCortar;
+    private javax.swing.JMenuItem miPegar;
+    private javax.swing.JMenuItem mitAbrir;
     private javax.swing.JTable tabla;
-    private javax.swing.JTextArea txtEntrada;
     // End of variables declaration//GEN-END:variables
 
 }

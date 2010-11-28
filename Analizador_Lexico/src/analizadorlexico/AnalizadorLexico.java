@@ -21,8 +21,13 @@ public class AnalizadorLexico {
         IDENTIFICADOR,
         MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, DIFERENTE,
         ERROR };
-
     private List<Lexico> lexicos;
+//    public static String[] PALABRAS_RESERVADAS={
+//        "if","then","else","for","while","switch","case","return"
+//    };
+//    public static String[] OPERADORES={
+//        "<",">","<=",">=","==","!="
+//    };
 
     public AnalizadorLexico() {
         this.lexicos = new ArrayList<Lexico>();
