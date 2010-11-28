@@ -25,9 +25,9 @@ public class AFDPalabrasReservadas  extends AFD{
         if(palabra.equalsIgnoreCase("while"))
             return TOKEN.WHILE;
         if(palabra.equalsIgnoreCase("switch"))
-            return TOKEN.WHILE;
+            return TOKEN.SWITCH;
         if(palabra.equalsIgnoreCase("case"))
-            return TOKEN.WHILE;
+            return TOKEN.CASE;
         if(palabra.equalsIgnoreCase("return"))
             return TOKEN.RETURN;
         return TOKEN.ERROR;
