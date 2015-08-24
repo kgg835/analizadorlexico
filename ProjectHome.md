@@ -1,0 +1,1 @@
+Sencilla aplicación con fines académicos sobre como empezar a desarrollar un analizador léxico
